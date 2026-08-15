@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una pequeña sorpresa</title>
+
+<style>
+*{box-sizing:border-box}
+:root{--navy:#172033;--blue:#31577f;--gray:#8b95a6;--line:#e5e9ef;--gold:#c9a45b;--gold-soft:#ead8ad}
+html{background:#fff}
+body{margin:0;min-height:100vh;background:#fff;color:var(--navy);font-family:Georgia,"Times New Roman",serif;display:flex;justify-content:center;align-items:center;overflow-x:hidden}
+.card{width:min(94vw,520px);min-height:92vh;padding:34px 22px 42px;display:flex;align-items:center;justify-content:center;text-align:center}
+.screen{display:none;width:100%;animation:screenIn .65s cubic-bezier(.22,.61,.36,1)}
+.screen.active{display:block}
+@keyframes screenIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.eyebrow{font:11px Arial,sans-serif;letter-spacing:3.5px;text-transform:uppercase;color:#7b8797}
+h1{font-size:clamp(31px,8vw,47px);line-height:1.08;margin:12px 0 18px;color:var(--navy);font-weight:700}
+p{font-size:18px;line-height:1.6}
+input{width:100%;max-width:320px;padding:15px;margin-top:4px;border:1px solid #dfe5ed;border-radius:14px;text-align:center;font-size:17px;outline:none;background:#fff;color:var(--navy)}
+input:focus{border-color:#7b9bc1;box-shadow:0 0 0 4px #31577f10}
+.gift-button{display:inline-flex;align-items:center;justify-content:center;border:1px solid #d8e0e9;background:#fff;color:#294d72;border-radius:999px;padding:13px 24px;min-width:128px;font:14px Arial,sans-serif;cursor:pointer;box-shadow:0 8px 24px #14233c12;transition:transform .2s,box-shadow .2s,border-color .2s}
+.gift-button:hover{box-shadow:0 10px 28px #14233c18}
+.gift-button:active{transform:scale(.97)}
+.photo{width:min(88vw,420px);margin:22px auto;padding:8px;border:1px solid #e8edf3;border-radius:22px;background:#fff;box-shadow:0 16px 40px #19284118}
+.photo img{width:100%;display:block;border-radius:16px}
+#s5.active .photo{animation:photoReveal 1s cubic-bezier(.22,.61,.36,1)}
+@keyframes photoReveal{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.error{height:24px;color:#a84b5b;font:13px Arial,sans-serif;margin-top:8px}
+.timer{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:28px 0}
+.time-box{background:#fafbfd;border-radius:16px;padding:16px 4px;border:1px solid #edf0f5}
+.number{display:block;font:700 clamp(27px,7vw,40px) Arial,sans-serif;color:#1d4778;letter-spacing:-1px}
+.unit{font:10px Arial,sans-serif;letter-spacing:1px;color:#7c8798;text-transform:uppercase}
+.letter,.gift-letter{position:relative;background:linear-gradient(180deg,#fff 0%,#fcfdff 100%);border:1px solid var(--line);box-shadow:0 12px 30px #19284110;overflow:hidden}
+.letter{margin:25px auto;max-width:430px;padding:28px 24px 30px;border-radius:4px 4px 14px 14px}
+.letter:before,.gift-letter:before{content:"";position:absolute;top:0;right:0;width:0;height:0;border-top:46px solid #f1f4f8;border-left:46px solid transparent}
+.letter:after,.gift-letter:after{content:"";position:absolute;top:0;right:0;width:0;height:0;border-top:31px solid #fff;border-left:31px solid transparent}
+.letter p{margin:0;color:#4c5668}
+.letter-label{display:block;margin-bottom:13px;font:10px Arial,sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:#a0a9b5}
+.letter-line{width:38px;height:1px;margin:0 auto 17px;background:#d5dce5}
+.gift-letter{margin:24px auto 0;padding:28px 22px 25px;max-width:430px;border-radius:4px 4px 16px 16px}
+.gift-letter strong{display:block;font-size:22px;color:#39465a}
+#dailyPhrase{font-size:20px;line-height:1.55;color:#4c5668;margin:16px auto;max-width:360px}
+.small{font:13px Arial,sans-serif;color:#8b95a6;line-height:1.55}
+#lockedText{max-width:340px;margin:14px auto 20px}
+.candle-wrap{margin:34px auto 12px;display:flex;flex-direction:column;align-items:center}
+.candle-button{width:104px;height:104px;border-radius:50%;border:1px solid #ece4d2;background:linear-gradient(145deg,#fff,#fbf8f1);box-shadow:0 12px 34px #b9974a22;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:53px;transition:transform .2s,box-shadow .2s;position:relative}
+.candle-button:active{transform:scale(.93)}
+.candle-button.lit{box-shadow:0 0 0 8px #c9a45b10,0 15px 42px #c9a45b38}
+.candle-hint{font:12px Arial,sans-serif;color:#9aa3af;margin-top:12px}
+.sparkle-field{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+.sparkle{position:absolute;color:var(--gold);font-family:Arial,sans-serif;font-weight:700;animation:sparkleFly 1.15s ease-out forwards;text-shadow:0 0 8px #ead8ad}
+@keyframes sparkleFly{0%{opacity:0;transform:translate(0,12px) scale(.4) rotate(0)}25%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(35deg)}}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.confetti-piece{position:absolute;width:9px;height:14px;border-radius:1px;animation:fall 4s linear forwards}
+.confetti-piece.small{width:6px;height:9px}
+.confetti-piece.gold{box-shadow:0 0 5px #ead8ad66}
+@keyframes fall{0%{transform:translate3d(0,-25px,0) rotate(0deg);opacity:0}8%{opacity:1}100%{transform:translate3d(var(--drift),105vh,0) rotate(900deg);opacity:0}}
+.burst{position:absolute;width:8px;height:12px;border-radius:1px;animation:burstOut 1.25s cubic-bezier(.15,.75,.25,1) forwards}
+@keyframes burstOut{0%{opacity:1;transform:translate(-50%,-50%) scale(.7) rotate(0)}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1) rotate(540deg)}}
+audio{width:min(100%,360px);margin-top:12px}
+.audio-intro{font-size:17px;color:#31577f;margin:25px 0 8px}
+.closing{display:none;max-width:390px;margin:30px auto 0;color:#172033;font-size:19px;line-height:1.7}
+.closing.show{display:block;animation:closingIn 1.2s cubic-bezier(.22,.61,.36,1)}
+@keyframes closingIn{from{opacity:0;transform:translateY(18px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+.final-sparkles{display:none;margin:15px 0 0;color:var(--gold);letter-spacing:13px;font-size:15px}
+.final-sparkles.show{display:block;animation:finalSparkleIn 1.5s ease}
+@keyframes finalSparkleIn{from{opacity:0;letter-spacing:4px}to{opacity:1;letter-spacing:13px}}
+@media (max-width:390px){.card{padding-left:18px;padding-right:18px}h1{font-size:clamp(29px,8vw,42px)}p{font-size:17px}.letter,.gift-letter{padding-left:20px;padding-right:20px}}
+</style>
+
+</head>
+
+<body>
+<div id="confetti"></div>
+<main class="card">
+<section class="screen active" id="s0">
+<div class="eyebrow">Una pequeña sorpresa</div>
+<h1>Solo para ti</h1>
+<p>Hay una fecha que significa mucho para nosotros...</p>
+<input id="key" type="text" inputmode="numeric" pattern="[0-9/]*" maxlength="10" placeholder="DD/MM/AAAA" aria-label="Fecha secreta" autocomplete="off">
+<div class="error" id="err"></div>
+<button class="gift-button" onclick="unlock()">Continuar</button>
+</section>
+
+<section class="screen" id="s1">
+<div class="eyebrow">Antes de empezar</div>
+<h1>Antes de que cumplas 27...</h1>
+<div class="photo">
+<img src="foto-pequeno.jpg" alt="Una foto de él cuando era pequeño" onerror="this.style.display='none';">
+</div>
+<p>Quería empezar por aquí...<br>por el niño que algún día se convertiría en el hombre que amo.</p>
+<button class="gift-button" onclick="next()">Continuar</button>
+</section>
+
+<section class="screen" id="s2">
+<div class="eyebrow">Un paso más</div>
+<h1>Enciende una velita</h1>
+<p>Cada una representa un poquito de todo lo que falta para llegar a tu día.</p>
+<div class="candle-wrap">
+<button class="candle-button" id="candleButton" onclick="lightCandle()" aria-label="Encender la velita">🕯️</button>
+<div class="candle-hint" id="candleHint">Tócala para encenderla</div>
+</div>
+</section>
+
+<section class="screen" id="s3">
+<div class="eyebrow">Cuenta regresiva</div>
+<h1 id="countdownTitle">Tu cumpleaños está cada vez más cerca</h1>
+<div class="timer">
+<div class="time-box"><span class="number" id="d">00</span><span class="unit">días</span></div>
+<div class="time-box"><span class="number" id="h">00</span><span class="unit">horas</span></div>
+<div class="time-box"><span class="number" id="m">00</span><span class="unit">minutos</span></div>
+<div class="time-box"><span class="number" id="s">00</span><span class="unit">segundos</span></div>
+</div>
+<p id="countdownText">Quiero que disfrutes cada segundo antes de que llegue tu día.</p>
+<button class="gift-button" onclick="next()">Continuar</button>
+</section>
+
+<section class="screen" id="s4">
+<div class="eyebrow">Una última cosa</div>
+<h1>El tiempo pasa...</h1>
+<div class="letter">
+<span class="letter-label">Para ti</span>
+<div class="letter-line"></div>
+<p>Pero hay algo que no cambia, lo mucho que te amo mi amor y lo feliz que me hace compartir mi vida contigo.</p>
+</div>
+<div class="gift-letter">
+<strong id="giftTitle">Abre tu regalo</strong>
+<p id="dailyPhrase"></p>
+<p class="small" id="lockedText">No me olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.</p>
+<button id="giftButton" class="gift-button" onclick="openGift()">Todavía no</button>
+</div>
+</section>
+
+<section class="screen" id="s5">
+<div class="eyebrow">25 de agosto</div>
+<div class="photo">
+<img src="foto-pequeno.jpg" alt="Una foto especial" onerror="this.style.display='none';">
+</div>
+<h1>¡Feliz cumpleaños, mi amor!</h1>
+<p class="audio-intro">Tengo algo que decirte...</p>
+<audio id="birthdayAudio" controls preload="metadata">
+<source src="cumpleanos.mp3" type="audio/mpeg">
+Tu navegador no puede reproducir este audio.
+</audio>
+<p id="closingMessage" class="closing">
+Y si después de todo esto todavía no te quedó claro...<br>
+sí, panzón, te amo muchísimo.
+</p>
+<div id="finalSparkles" class="final-sparkles">✦ · ✦</div>
+</section>
+</main>
+
+<script>
+
+const SECRET_DATE = "23/04/2025";
+const BIRTHDAY_MONTH = 7;
+const BIRTHDAY_DAY = 25;
+const BIRTHDAY_YEAR = 2026;
+
+const DAILY_MESSAGES = [
+  "Mi panzón, eres todo lo que busco y muchísimo más.",
+  "Mi amor hermoso, precioso, cada día me haces sentir más afortunada de tenerte.",
+  "Por si hoy se te olvida, te amo muchísimo y me encanta compartir mi vida contigo.",
+  "Mi panzón, no sabes lo feliz que me hace saber que eres tú con quien quiero compartir mi vida.",
+  "Eres todo lo que busco, todo lo que quiero y una de las partes más bonitas de mi vida.",
+  "Solo paso a recordarte que eres mi persona favorita y que te amo más de lo que a veces sé explicar.",
+  "Mi amor, espero que nunca dudes de lo importante que eres para mí.",
+  "Cada día falta menos para celebrarte, pero yo ya estoy emocionada por consentir a mi panzón.",
+  "Me encanta tenerte en mi vida, poder llamarte mi amor y saber que todavía nos quedan muchísimas cosas por vivir.",
+  "Mi panzón precioso, gracias por hacerme tan feliz simplemente siendo tú.",
+  "Si pudiera elegir otra vez, volvería a elegirte a ti. Sin pensarlo.",
+  "Ya casi llega tu día, mi amor. Mientras tanto, recuerda que eres todo lo que busco.",
+  "Te amo por todo lo que eres, por lo que somos y por todo lo que todavía nos falta vivir juntos."
+];
+
+let current = 0;
+const screens = document.querySelectorAll(".screen");
+
+function show(i) {
+  screens.forEach(s => s.classList.remove("active"));
+  screens[i].classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  current = i;
+}
+
+function next() {
+  if (current < screens.length - 1) show(current + 1);
+}
+
+const keyInput = document.getElementById("key");
+
+keyInput.addEventListener("input", function() {
+  const digits = this.value.replace(/\D/g, "").slice(0, 8);
+  let value = digits;
+
+  if (digits.length > 4) {
+    value = digits.slice(0,2) + "/" + digits.slice(2,4) + "/" + digits.slice(4);
+  } else if (digits.length > 2) {
+    value = digits.slice(0,2) + "/" + digits.slice(2);
+  }
+
+  this.value = value;
+  document.getElementById("err").textContent = "";
+});
+
+keyInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    unlock();
+  }
+});
+
+function unlock() {
+  const entered = document.getElementById("key").value;
+  const err = document.getElementById("err");
+
+  if (entered === SECRET_DATE) {
+    err.textContent = "";
+    show(1);
+  } else {
+    err.textContent = "Esa no es la fecha secreta.";
+  }
+}
+
+function getNow() {
+  return new Date(2026, BIRTHDAY_MONTH, BIRTHDAY_DAY, 12, 0, 0, 0);
+}
+
+function birthdayStart() {
+  return new Date(BIRTHDAY_YEAR, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
+}
+
+function unlocked() {
+  const now = getNow();
+  const birthday = birthdayStart();
+  return now >= birthday;
+}
+
+function isBirthdayOrLater() {
+  return unlocked();
+}
+
+function getDailyPhrase() {
+  const now = getNow();
+
+  if (now >= birthdayStart()) {
+    return "Por fin llegó tu día, mi amor.";
+  }
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const birthday = new Date(BIRTHDAY_YEAR, BIRTHDAY_MONTH, BIRTHDAY_DAY);
+  const daysLeft = Math.ceil((birthday - today) / 86400000);
+  const index = Math.max(0, Math.min(DAILY_MESSAGES.length - 1, daysLeft - 1));
+  return DAILY_MESSAGES[index];
+}
+
+function updateGift() {
+  const button = document.getElementById("giftButton");
+  const text = document.getElementById("lockedText");
+  const phrase = document.getElementById("dailyPhrase");
+
+  phrase.textContent = getDailyPhrase();
+
+  if (unlocked()) {
+    button.textContent = "Abrir";
+    text.textContent = "Hoy sí puedes abrirlo.";
+  } else {
+    button.textContent = "Todavía no";
+    text.textContent = "No me olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.";
+  }
+}
+
+function updateCountdown() {
+  const now = getNow();
+  const difference = Math.max(0, birthdayStart() - now);
+  const title = document.getElementById("countdownTitle");
+  const text = document.getElementById("countdownText");
+
+  if (isBirthdayOrLater()) {
+    title.textContent = "Es hoy, es hoy mi amor";
+    text.textContent = "Sigue viendo para encontrar tu regalo.";
+  } else {
+    title.textContent = "Tu cumpleaños está cada vez más cerca";
+    text.textContent = "Quiero que disfrutes cada segundo antes de que llegue tu día.";
+  }
+
+  const total = Math.floor(difference / 1000);
+
+  document.getElementById("d").textContent =
+    String(Math.floor(total / 86400)).padStart(2, "0");
+  document.getElementById("h").textContent =
+    String(Math.floor((total % 86400) / 3600)).padStart(2, "0");
+  document.getElementById("m").textContent =
+    String(Math.floor((total % 3600) / 60)).padStart(2, "0");
+  document.getElementById("s").textContent =
+    String(total % 60).padStart(2, "0");
+}
+
+function confetti() {
+  const container = document.getElementById("confetti");
+  container.innerHTML = "";
+  const colors = ["#19324d","#31577f","#6f8faa","#dfe7ed","#ffffff","#c9a45b"];
+
+  for (let i = 0; i < 100; i++) {
+    const piece = document.createElement("span");
+    piece.className = "burst";
+    piece.style.left = "50vw";
+    piece.style.top = "42vh";
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 110 + Math.random() * 280;
+
+    piece.style.setProperty("--x", Math.cos(angle) * distance + "px");
+    piece.style.setProperty("--y", Math.sin(angle) * distance + "px");
+    piece.style.animationDelay = Math.random() * .16 + "s";
+
+    container.appendChild(piece);
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+
+    if (Math.random() > .72) piece.classList.add("gold");
+    if (Math.random() > .55) piece.classList.add("small");
+
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.top = (-10 - Math.random() * 80) + "px";
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2.8 + Math.random() * 2.8) + "s";
+    piece.style.animationDelay = Math.random() * .75 + "s";
+    piece.style.setProperty("--drift", (Math.random() * 180 - 90) + "px");
+
+    container.appendChild(piece);
+  }
+
+  setTimeout(() => container.innerHTML = "", 6500);
+}
+
+function lightCandle() {
+  const button = document.getElementById("candleButton");
+  const hint = document.getElementById("candleHint");
+
+  if (button.classList.contains("lit")) return;
+
+  button.classList.add("lit");
+  hint.textContent = "Una velita más para llegar a tu día...";
+  createSparkles();
+
+  setTimeout(() => next(), 1000);
+}
+
+function createSparkles() {
+  const field = document.createElement("div");
+  field.className = "sparkle-field";
+  document.body.appendChild(field);
+
+  const symbols = ["✦","✧","·","✦","⋆"];
+
+  for (let i = 0; i < 26; i++) {
+    const s = document.createElement("span");
+    s.className = "sparkle";
+    s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    s.style.left = (50 + (Math.random() * 34 - 17)) + "vw";
+    s.style.top = (50 + (Math.random() * 22 - 11)) + "vh";
+    s.style.fontSize = (8 + Math.random() * 13) + "px";
+    s.style.setProperty("--dx", (Math.random() * 170 - 85) + "px");
+    s.style.setProperty("--dy", (-40 - Math.random() * 130) + "px");
+    s.style.animationDelay = Math.random() * .25 + "s";
+    field.appendChild(s);
+  }
+
+  setTimeout(() => field.remove(), 1700);
+}
+
+function openGift() {
+  if (!unlocked()) {
+    const text = document.getElementById("lockedText");
+
+    text.animate(
+      [{ opacity: 1 }, { opacity: 0.35 }, { opacity: 1 }],
+      { duration: 500 }
+    );
+
+    return;
+  }
+
+  confetti();
+  show(5);
+
+  document.getElementById("closingMessage").classList.remove("show");
+  document.getElementById("finalSparkles").classList.remove("show");
+
+  const audio = document.getElementById("birthdayAudio");
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+document.getElementById("birthdayAudio").addEventListener("ended", function() {
+  setTimeout(() => {
+    document.getElementById("closingMessage").classList.add("show");
+
+    setTimeout(() => {
+      document.getElementById("finalSparkles").classList.add("show");
+    }, 250);
+  }, 800);
+});
+
+updateGift();
+updateCountdown();
+
+setInterval(updateCountdown, 1000);
+setInterval(updateGift, 60000);
+
+</script>
+</body>
+</html>
