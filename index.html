@@ -127,7 +127,7 @@ audio{width:min(100%,360px);margin-top:12px}
 <div class="gift-letter">
 <strong id="giftTitle">Abre tu regalo</strong>
 <p id="dailyPhrase"></p>
-<p class="small" id="lockedText">No me olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.</p>
+<p class="small" id="lockedText">No olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.</p>
 <button id="giftButton" class="gift-button" onclick="openGift()">Todavía no</button>
 </div>
 </section>
@@ -140,7 +140,7 @@ audio{width:min(100%,360px);margin-top:12px}
 <h1>¡Feliz cumpleaños, mi amor!</h1>
 <p class="audio-intro">Tengo algo que decirte...</p>
 <audio id="birthdayAudio" controls preload="metadata">
-<source src="cumpleanos.mp3" type="audio/mpeg">
+<source src="Cumpleanos.mp3" type="audio/mpeg">
 Tu navegador no puede reproducir este audio.
 </audio>
 <p id="closingMessage" class="closing">
@@ -267,7 +267,7 @@ function updateGift() {
     text.textContent = "Hoy sí puedes abrirlo.";
   } else {
     button.textContent = "Todavía no";
-    text.textContent = "No me olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.";
+    text.textContent = "No olvides venir cada día para ver qué te espera. El mejor día todavía está por llegar.";
   }
 }
 
